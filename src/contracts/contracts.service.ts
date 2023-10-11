@@ -3,12 +3,7 @@ import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Contract } from './entities/contract.entity';
-import {
-  EntityManager,
-  EntityRepository,
-  FilterQuery,
-  wrap,
-} from '@mikro-orm/core';
+import { EntityManager, EntityRepository, FilterQuery } from '@mikro-orm/core';
 
 @Injectable()
 export class ContractsService {
@@ -23,22 +18,38 @@ export class ContractsService {
 
     await this.entityManager.persistAndFlush(newContract);
 
-    return wrap(newContract).toObject();
+    return newContract;
   }
 
-  findAll(where?: FilterQuery<Contract>) {
-    // const contracts = await this.contractRepository.find(where);
+  async findAll(where?: FilterQuery<Contract>) {
+    const contracts = await this.contractRepository.find(where);
+    return contracts;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} contract`;
+  async findOne(id: string) {
+    const contract = await this.contractRepository.findOneOrFail({ uuid: id });
+    return contract;
   }
 
-  update(id: number, updateContractDto: UpdateContractDto) {
-    return `This action updates a #${id} contract`;
+  async update(id: string, dto: UpdateContractDto) {
+    const contract = await this.contractRepository.findOneOrFail({ uuid: id });
+
+    Object.keys(dto).forEach((dtoKey) => {
+      if (!!dto[dtoKey]) {
+        contract[dtoKey] = dto[dtoKey];
+      }
+    });
+
+    await this.entityManager.flush();
+
+    return contract;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} contract`;
+  async remove(id: string) {
+    const contract = await this.contractRepository.findOneOrFail({ uuid: id });
+
+    contract.deleted_at = new Date();
+
+    await this.entityManager.flush();
   }
 }
