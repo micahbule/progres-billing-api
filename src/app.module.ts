@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ContractsModule } from './contracts/contracts.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { CategoryModule } from './category/category.module';
 import mikroOrmConfig from './mikro-orm.config';
 
 @Module({
@@ -14,6 +15,7 @@ import mikroOrmConfig from './mikro-orm.config';
       useFactory: mikroOrmConfig,
       inject: [ConfigService],
     }),
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
