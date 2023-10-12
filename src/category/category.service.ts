@@ -3,7 +3,8 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Category } from './entities/category.entity';
-import { EntityManager, EntityRepository, FilterQuery } from '@mikro-orm/core';
+import { EntityManager, FilterQuery } from '@mikro-orm/core';
+import { EntityRepository } from '@mikro-orm/postgresql';
 
 @Injectable()
 export class CategoryService {
