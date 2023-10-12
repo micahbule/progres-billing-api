@@ -10,16 +10,16 @@ export class Category extends BaseEntity {
   name: string;
 
   @Property()
-  total_price: number;
+  total_price = 0;
 
   @Property()
-  evaluated_percentage: number;
+  evaluated_percentage = 0;
 
   @Property()
-  accomplished_amount: number;
+  accomplished_amount = 0;
 
-  @OneToOne()
-  parent_category: Category;
+  @OneToOne({ nullable: true })
+  parent_category?: Category;
 
   @ManyToOne()
   contract: Contract;

@@ -3,7 +3,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Category } from './entities/category.entity';
-import { EntityManager, EntityRepository } from '@mikro-orm/core';
+import { EntityManager, EntityRepository, FilterQuery } from '@mikro-orm/core';
 
 @Injectable()
 export class CategoryService {
@@ -21,19 +21,35 @@ export class CategoryService {
     return newCategory;
   }
 
-  findAll() {
-    return `This action returns all category`;
+  async findAll(where?: FilterQuery<Category>) {
+    const categories = await this.categoryRepository.find(where);
+    return categories;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: string) {
+    const category = await this.categoryRepository.findOneOrFail({ uuid: id });
+    return category;
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: string, dto: UpdateCategoryDto) {
+    const category = await this.categoryRepository.findOneOrFail({ uuid: id });
+
+    Object.keys(dto).forEach((dtoKey) => {
+      if (!!dto[dtoKey]) {
+        category[dtoKey] = dto[dtoKey];
+      }
+    });
+
+    await this.entityManager.flush();
+
+    return category;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: string) {
+    const contract = await this.categoryRepository.findOneOrFail({ uuid: id });
+
+    contract.deleted_at = new Date();
+
+    await this.entityManager.flush();
   }
 }
