@@ -18,6 +18,9 @@ export class Category extends BaseEntity {
   @Property()
   accomplished_amount = 0;
 
+  @Property()
+  is_parent = false;
+
   @OneToOne({ nullable: true })
   parent_category?: Category;
 

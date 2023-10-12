@@ -16,7 +16,18 @@ export class CategoryService {
   async create(createCategoryDto: CreateCategoryDto) {
     const newCategory = new Category(createCategoryDto);
 
-    await this.entityManager.persistAndFlush(newCategory);
+    if (typeof createCategoryDto.parent_category !== 'undefined') {
+      const parentCategory = await this.categoryRepository.findOneOrFail(
+        createCategoryDto.parent_category,
+      );
+
+      if (!parentCategory.is_parent) {
+        parentCategory.is_parent = true;
+      }
+    }
+
+    await this.entityManager.persist(newCategory);
+    await this.entityManager.flush();
 
     return newCategory;
   }
