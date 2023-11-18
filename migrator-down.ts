@@ -10,8 +10,7 @@ import { ConfigService } from '@nestjs/config';
   const orm = await MikroORM.init(getConfig(configService));
   const migrator = orm.getMigrator();
 
-  await migrator.createMigration();
-  await migrator.up();
+  await migrator.down();
 
   await orm.close(true);
   process.exit(0);

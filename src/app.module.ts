@@ -5,6 +5,7 @@ import { ContractsModule } from './contracts/contracts.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { CategoryModule } from './category/category.module';
+import { BillablesModule } from './billables/billables.module';
 import mikroOrmConfig from './mikro-orm.config';
 
 @Module({
@@ -16,6 +17,7 @@ import mikroOrmConfig from './mikro-orm.config';
       inject: [ConfigService],
     }),
     CategoryModule,
+    BillablesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

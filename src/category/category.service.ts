@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { Category } from './entities/category.entity';
+import { Category } from '@/category/entities/category.entity';
 import { EntityManager, FilterQuery } from '@mikro-orm/core';
 import { EntityRepository } from '@mikro-orm/postgresql';
+import { Contract } from '@/contracts/entities/contract.entity';
 
 @Injectable()
 export class CategoryService {
@@ -16,6 +17,18 @@ export class CategoryService {
 
   async create(createCategoryDto: CreateCategoryDto) {
     const newCategory = new Category(createCategoryDto);
+
+    newCategory.contract = this.entityManager.getReference(
+      Contract,
+      createCategoryDto.contract,
+    );
+
+    if (typeof createCategoryDto.parent_category !== 'undefined') {
+      newCategory.parent_category = this.categoryRepository.getReference(
+        createCategoryDto.parent_category,
+        { wrapped: true },
+      );
+    }
 
     if (typeof createCategoryDto.parent_category !== 'undefined') {
       const parentCategory = await this.categoryRepository.findOneOrFail(
@@ -58,9 +71,9 @@ export class CategoryService {
   }
 
   async remove(id: string) {
-    const contract = await this.categoryRepository.findOneOrFail({ uuid: id });
+    const category = await this.categoryRepository.findOneOrFail({ uuid: id });
 
-    contract.deleted_at = new Date();
+    category.deleted_at = new Date();
 
     await this.entityManager.flush();
   }
