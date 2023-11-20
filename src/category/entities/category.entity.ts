@@ -1,12 +1,4 @@
-import {
-  // BeforeUpdate,
-  Entity,
-  // EventArgs,
-  ManyToOne,
-  OneToOne,
-  Property,
-  Ref,
-} from '@mikro-orm/core';
+import { Entity, ManyToOne, OneToOne, Property, Ref } from '@mikro-orm/core';
 import { BaseEntity } from '../../base.entity';
 import { Contract } from '../../contracts/entities/contract.entity';
 import { CreateCategoryDto } from '../dto/create-category.dto';
@@ -51,25 +43,4 @@ export class Category extends BaseEntity {
 
   @ManyToOne(() => Contract, { ref: true })
   contract: Contract;
-
-  // @BeforeUpdate()
-  // onUpdate(event: EventArgs<Category>) {
-  //   const { changeSet } = event;
-  //   const { payload } = changeSet;
-  //   const { accomplished_amount: accomplishedAmount, total_price: totalPrice } =
-  //     payload;
-
-  //   /**
-  //    * If update changeset has accomplished amount or total price,
-  //    * recompute for the evaluated percentage
-  //    */
-  //   if (
-  //     typeof accomplishedAmount !== 'undefined' ||
-  //     typeof totalPrice !== 'undefined'
-  //   ) {
-  //     event.changeSet.payload.evaluated_percentage = Number(
-  //       ((accomplishedAmount / totalPrice) * 100).toFixed(2),
-  //     );
-  //   }
-  // }
 }

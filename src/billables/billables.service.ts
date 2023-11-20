@@ -17,16 +17,25 @@ export class BillablesService {
     private readonly entityManager: EntityManager,
   ) {}
 
+  async updateCategory(
+    dto: CreateBillableDto | UpdateBillableDto,
+    billable: Billable,
+  ) {
+    const category = await this.categoryRepository.findOneOrFail(dto.category);
+
+    category.total_price = category.total_price + billable.subtotal;
+    category.accomplished_amount =
+      category.accomplished_amount + billable.accomplished_amount;
+  }
+
   async create(createBillableDto: CreateBillableDto) {
     const newBillable = new Billable(createBillableDto);
 
-    const category = await this.categoryRepository.getReference(
+    const category = await this.categoryRepository.findOneOrFail(
       createBillableDto.category,
     );
 
-    category.total_price = category.total_price + newBillable.subtotal;
-    category.accomplished_amount =
-      category.accomplished_amount + newBillable.accomplished_amount;
+    this.updateCategory(createBillableDto, newBillable);
 
     newBillable.category = ref(category);
 
@@ -54,6 +63,8 @@ export class BillablesService {
         billable[dtoKey] = dto[dtoKey];
       }
     });
+
+    this.updateCategory(dto, billable);
 
     await this.entityManager.flush();
 
